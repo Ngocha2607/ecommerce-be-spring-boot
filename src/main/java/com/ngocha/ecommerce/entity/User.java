@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "users")
 @Data
@@ -35,4 +38,8 @@ public class User {
     private String email;
 
     private String password;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 }
