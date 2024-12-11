@@ -12,6 +12,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,28 +30,42 @@ import jakarta.servlet.http.HttpServletResponse;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-//    @Autowired
-//    private JWTFilter jwtFilter;
+    @Autowired
+    private JWTFilter jwtFilter;
 
     @Autowired
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((request) -> request
-                .requestMatchers(AppConstants.PUBLIC_URLS).permitAll()
-                .requestMatchers(AppConstants.USER_URLS).hasAnyAuthority("USER", "ADMIN")
-                .requestMatchers(AppConstants.ADMIN_URLS).hasAuthority("ADMIN")
-                .anyRequest()
-                .authenticated());
-
-
-
+//        http
+//                .csrf(AbstractHttpConfigurer::disable)
+//                .authorizeHttpRequests((request) -> request
+//                .requestMatchers(AppConstants.PUBLIC_URLS).permitAll()
+//                .requestMatchers(AppConstants.USER_URLS).hasAnyAuthority("USER", "ADMIN")
+//                .requestMatchers(AppConstants.ADMIN_URLS).hasAuthority("ADMIN")
+//                .anyRequest()
+//                .authenticated()
+//                )
+//
+//                ;
+//
+//
+//
 //        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//        http.authenticationProvider(daoAuthenticationProvider());
+//
+//        return http.build();
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests((requests) -> requests
+                        .anyRequest().permitAll()
+                );
 
-        http.authenticationProvider(daoAuthenticationProvider());
 
         return http.build();
+
     }
 
     @Bean
