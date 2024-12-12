@@ -4,15 +4,14 @@ import com.ngocha.ecommerce.configuration.AppConstants;
 import com.ngocha.ecommerce.payload.UserDto;
 import com.ngocha.ecommerce.payload.UserResponse;
 import com.ngocha.ecommerce.service.UserService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
-@SecurityRequirement(name = "E-Commerce Application")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -45,5 +44,12 @@ public class UserController {
         String status = this.userService.deleteUser(userId);
 
         return new ResponseEntity<>(status, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/test")
+    @PreAuthorize("")
+    public String testHanlder(){
+        return "Test";
     }
 }

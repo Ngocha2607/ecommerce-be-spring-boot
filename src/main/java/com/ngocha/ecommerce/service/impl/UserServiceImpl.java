@@ -1,4 +1,4 @@
-package com.ngocha.ecommerce.service;
+package com.ngocha.ecommerce.service.impl;
 
 import com.ngocha.ecommerce.configuration.AppConstants;
 import com.ngocha.ecommerce.entity.Role;
@@ -7,41 +7,50 @@ import com.ngocha.ecommerce.exception.APIException;
 import com.ngocha.ecommerce.exception.ResourceNotFoundException;
 import com.ngocha.ecommerce.payload.UserDto;
 import com.ngocha.ecommerce.payload.UserResponse;
-import com.ngocha.ecommerce.repository.RoleRepository;
 import com.ngocha.ecommerce.repository.UserRepository;
+import com.ngocha.ecommerce.service.UserService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Transactional
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     @Override
+    public UserDetailsService userDetailsService() {
+        return new UserDetailsService() {
+            @Override
+            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                return userRepository.findByEmail(username)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            }
+        };
+
+    }
     public UserDto registerUser(UserDto userDto) {
         User user = modelMapper.map(userDto, User.class);
 
-        Role role = roleRepository.findById(AppConstants.USER_ID).orElseThrow();
-        user.getRoles().add(role);
+        user.setRole(Role.USER);
 
         User registeredUser = userRepository.save(user);
 
