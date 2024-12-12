@@ -28,25 +28,30 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
-
-    private final PasswordEncoder passwordEncoder;
-
-    private final ModelMapper modelMapper;
+    @Autowired
+    private UserRepository userRepository;
+@Autowired
+    private PasswordEncoder passwordEncoder;
+@Autowired
+    private ModelMapper modelMapper;
 
     @Override
     public UserDetailsService userDetailsService() {
-        return new UserDetailsService() {
-            @Override
-            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                return userRepository.findByEmail(username)
-                        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-            }
-        };
+        return username -> userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
     }
+
+    @Override
+    public UserDto getUserByEmail(String email) throws UsernameNotFoundException {
+        return modelMapper.map(
+                userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found")),
+                UserDto.class
+        );
+    }
+
     public UserDto registerUser(UserDto userDto) {
         User user = modelMapper.map(userDto, User.class);
 

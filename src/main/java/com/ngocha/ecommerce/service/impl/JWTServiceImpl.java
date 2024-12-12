@@ -8,7 +8,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +19,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
-@RequiredArgsConstructor
 public class JWTServiceImpl implements JWTService {
-    @Value("${jwt_secret}")
-    private final String secret;
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
@@ -42,7 +38,7 @@ public class JWTServiceImpl implements JWTService {
     // return-> The value of the specified claim.
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
         // Extract the specified claim using the provided function
-        final Claims claims = extractAllClaims(token);
+        Claims claims = extractAllClaims(token);
         return claimResolver.apply(claims);
     }
 
@@ -58,7 +54,7 @@ public class JWTServiceImpl implements JWTService {
     }
 
     private Key getSignKey() {
-        byte[] key = Decoders.BASE64.decode(secret);
+        byte[] key = Decoders.BASE64.decode("413F4428472B4B6250655368566D5970337336763979244226452948404D6351");
         return Keys.hmacShaKeyFor(key);
     }
 
@@ -84,7 +80,7 @@ public class JWTServiceImpl implements JWTService {
     }
     public Boolean validateToken(String token, UserDetails userDetails) {
         // Extract username from token and check if it matches UserDetails' username
-        final String userName = extractUserName(token);
+         String userName = extractUserName(token);
         // Also check if the token is expired
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }

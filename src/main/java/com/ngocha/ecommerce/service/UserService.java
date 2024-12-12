@@ -5,7 +5,6 @@ import com.ngocha.ecommerce.payload.UserResponse;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-@Service
 public interface UserService {
     UserDto registerUser(UserDto userDto);
     UserResponse getAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
@@ -13,4 +12,5 @@ public interface UserService {
     UserDto updateUser(Long userId, UserDto userDto);
     String deleteUser(Long userId);
     UserDetailsService userDetailsService();
+    UserDto getUserByEmail(String email);
 }

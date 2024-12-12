@@ -4,6 +4,7 @@ import com.ngocha.ecommerce.configuration.AppConstants;
 import com.ngocha.ecommerce.payload.UserDto;
 import com.ngocha.ecommerce.payload.UserResponse;
 import com.ngocha.ecommerce.service.UserService;
+import com.ngocha.ecommerce.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class UserController {
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @GetMapping("/admin/users")
     public ResponseEntity<UserResponse> getUsers(

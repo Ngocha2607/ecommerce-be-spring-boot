@@ -3,13 +3,13 @@ package com.ngocha.ecommerce.configuration;
 import com.ngocha.ecommerce.entity.Role;
 import com.ngocha.ecommerce.security.JwtFilter;
 import com.ngocha.ecommerce.service.UserService;
-import lombok.RequiredArgsConstructor;
+import com.ngocha.ecommerce.service.impl.UserServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,10 +22,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
-    private final JwtFilter jwtFilter;
-    private final UserService userService;
+    @Autowired
+    private JwtFilter jwtFilter;
+
+    @Autowired
+    private UserService userService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
