@@ -1,6 +1,7 @@
 package com.ngocha.ecommerce.controller;
 
 import com.ngocha.ecommerce.configuration.AppConstants;
+import com.ngocha.ecommerce.entity.User;
 import com.ngocha.ecommerce.payload.UserDto;
 import com.ngocha.ecommerce.payload.UserResponse;
 import com.ngocha.ecommerce.service.UserService;
@@ -35,8 +36,8 @@ public class UserController {
     }
 
     @PutMapping("/public/users/{userId}")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto, @PathVariable Long userId) {
-        UserDto updatedUser = this.userService.updateUser(userId, userDto);
+    public ResponseEntity<UserDto> updateUser(@RequestBody User user, @PathVariable Long userId) {
+        UserDto updatedUser = this.userService.updateUser(userId, user);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 

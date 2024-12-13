@@ -1,13 +1,21 @@
 package com.ngocha.ecommerce.service.impl;
 
 import com.ngocha.ecommerce.configuration.AppConstants;
+import com.ngocha.ecommerce.entity.User;
+import com.ngocha.ecommerce.payload.JWTAuthResponse;
+import com.ngocha.ecommerce.payload.UserDto;
+import com.ngocha.ecommerce.payload.request.RefreshTokenRequest;
 import com.ngocha.ecommerce.service.JWTService;
+import com.ngocha.ecommerce.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +27,10 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class JWTServiceImpl implements JWTService {
+    private final UserService userService;
+    private final ModelMapper modelMapper;
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
@@ -29,6 +40,17 @@ public class JWTServiceImpl implements JWTService {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + AppConstants.JWT_TOKEN_VALIDITY))
+                .signWith(getSignKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    @Override
+    public String generateRefreshToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        return Jwts.builder()
+                .setClaims(extraClaims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + AppConstants.JWT_REFRESH_TOKEN_VALIDITY))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -83,5 +105,25 @@ public class JWTServiceImpl implements JWTService {
          String userName = extractUserName(token);
         // Also check if the token is expired
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    public JWTAuthResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+        String userEmail = extractUserName(refreshTokenRequest.getToken());
+
+        UserDto userDto = userService.getUserByEmail(userEmail);
+        User user = modelMapper.map(userDto, User.class);
+
+        if(validateToken(refreshTokenRequest.getToken(), user)) {
+            var jwt = generateToken(user);
+
+            JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
+
+            jwtAuthResponse.setRefreshToken(refreshTokenRequest.getToken());
+            jwtAuthResponse.setToken(jwt);
+            jwtAuthResponse.setUser(userDto);
+            return jwtAuthResponse;
+        }
+        return null;
+
     }
 }

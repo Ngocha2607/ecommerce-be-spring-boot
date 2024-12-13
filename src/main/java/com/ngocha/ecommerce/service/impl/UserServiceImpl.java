@@ -1,6 +1,5 @@
 package com.ngocha.ecommerce.service.impl;
 
-import com.ngocha.ecommerce.configuration.AppConstants;
 import com.ngocha.ecommerce.entity.Role;
 import com.ngocha.ecommerce.entity.User;
 import com.ngocha.ecommerce.exception.APIException;
@@ -9,22 +8,18 @@ import com.ngocha.ecommerce.payload.UserDto;
 import com.ngocha.ecommerce.payload.UserResponse;
 import com.ngocha.ecommerce.repository.UserRepository;
 import com.ngocha.ecommerce.service.UserService;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,18 +47,15 @@ public class UserServiceImpl implements UserService {
         );
     }
 
-    public UserDto registerUser(UserDto userDto) {
-        User user = modelMapper.map(userDto, User.class);
-
+    public UserDto registerUser(User user) {
         user.setRole(Role.USER);
 
         User registeredUser = userRepository.save(user);
 
-        userDto = modelMapper.map(registeredUser, UserDto.class);
-
-        return userDto;
+        return modelMapper.map(registeredUser, UserDto.class);
 
     }
+
 
     @Override
     public UserResponse getAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
@@ -108,20 +100,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(Long userId, UserDto userDto) {
-        User user = userRepository.findById(userId)
+    public UserDto updateUser(Long userId, User user) {
+        User existUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
+        String encodedPass = passwordEncoder.encode(user.getPassword());
+        existUser.setFirstName(user.getFirstName());
+        existUser.setLastName(user.getLastName());
+        existUser.setMobileNumber(user.getMobileNumber());
+        existUser.setEmail(user.getEmail());
+        existUser.setPassword(encodedPass);
 
-        String encodedPass = passwordEncoder.encode(userDto.getPassword());
-
-        user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());
-        user.setMobileNumber(userDto.getMobileNumber());
-        user.setEmail(userDto.getEmail());
-        user.setPassword(encodedPass);
-
-        userDto = modelMapper.map(user, UserDto.class);
-        return userDto;
+        return modelMapper.map(existUser, UserDto.class);
     }
 
     @Override
