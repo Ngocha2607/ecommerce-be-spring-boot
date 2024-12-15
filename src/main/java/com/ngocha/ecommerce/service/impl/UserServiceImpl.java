@@ -48,7 +48,8 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserDto registerUser(User user) {
-        user.setRole(Role.USER);
+
+        user.setRole(Role.USER.name());
 
         User registeredUser = userRepository.save(user);
 
@@ -68,8 +69,8 @@ public class UserServiceImpl implements UserService {
 
         List<User> users = pageUsers.getContent();
 
-        if(users.size() == 0) {
-            throw new APIException("No User Exists!");
+        if(users.isEmpty()) {
+            throw new APIException("No User Exist!");
         }
 
         List<UserDto> userDtos = users.stream().map(user -> {
@@ -94,9 +95,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
 
-        UserDto userDto = modelMapper.map(user, UserDto.class);
-
-        return userDto;
+        return modelMapper.map(user, UserDto.class);
     }
 
     @Override

@@ -11,8 +11,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.List;
-
 @SpringBootApplication
 public class EcommerceApplication implements CommandLineRunner {
 	@Autowired
@@ -29,7 +27,7 @@ public class EcommerceApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		User adminAccount = userRepository.findByRole(Role.ADMIN);
+		User adminAccount = userRepository.findByRole(Role.ADMIN.name());
 
 		if(adminAccount == null) {
 			User user = new User();
@@ -37,7 +35,7 @@ public class EcommerceApplication implements CommandLineRunner {
 			user.setEmail("admin@gmail.com");
 			user.setFirstName("admin");
 			user.setLastName("admin");
-			user.setRole(Role.ADMIN);
+			user.setRole(Role.ADMIN.name());
 			user.setPassword(new BCryptPasswordEncoder().encode("admin"));
 
 			userRepository.save(user);
