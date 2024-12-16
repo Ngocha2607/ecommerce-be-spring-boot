@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -38,11 +37,12 @@ public class AuthController {
     public ResponseEntity<UserDto> registerHandler(@Valid @RequestBody User user) throws UserNotFoundException
     {
 
+
         String encodedPass = passwordEncoder.encode(user.getPassword());
 
         user.setPassword(encodedPass);
 
-        UserDto userDto = userService.registerUser(user);
+        UserDto userDto = this.userService.registerUser(user);
 
 //        String token = jwtService.generateToken(userService.userDetailsService());
 
