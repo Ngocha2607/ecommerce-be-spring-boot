@@ -5,6 +5,8 @@ import com.ngocha.ecommerce.payload.ProductDto;
 import com.ngocha.ecommerce.payload.ProductResponse;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 public interface ProductService {
     ProductDto store(Long categoryId, Product product);
 
@@ -20,5 +22,5 @@ public interface ProductService {
 
     ProductResponse searchProductByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-    ProductDto updateProductImage(Long productId, MultipartFile image);
+    ProductDto updateProductImage(Long productId, MultipartFile image) throws IOException;
 }

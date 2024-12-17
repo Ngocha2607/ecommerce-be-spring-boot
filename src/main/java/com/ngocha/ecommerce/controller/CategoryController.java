@@ -5,6 +5,7 @@ import com.ngocha.ecommerce.entity.Category;
 import com.ngocha.ecommerce.payload.CategoryDto;
 import com.ngocha.ecommerce.payload.CategoryResponse;
 import com.ngocha.ecommerce.service.CategoryService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class CategoryController {
-    @Autowired
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
     @GetMapping("/public/categories")
     public ResponseEntity<CategoryResponse> getUsers(
@@ -31,19 +32,19 @@ public class CategoryController {
         return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
-    @PostMapping("/public/categories/store")
+    @PostMapping("/admin/categories/store")
     public ResponseEntity<Category> store(@RequestBody CategoryDto categoryDto) {
         Category storedCategory = categoryService.create(categoryDto);
         return new ResponseEntity<>(storedCategory, HttpStatus.OK);
     }
 
-    @PutMapping("/public/categories/{categoryId}")
+    @PutMapping("/admin/categories/{categoryId}")
     public ResponseEntity<Category> updateCategory(@RequestBody Category category, @PathVariable Long categoryId) {
         Category updatedCategory = categoryService.updateCategory(categoryId, category);
         return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
     }
 
-    @DeleteMapping("/public/categories/{categoryId}")
+    @DeleteMapping("/admin/categories/{categoryId}")
     public ResponseEntity<String> deleteCategory(@PathVariable Long categoryId) {
         String status = categoryService.deleteCategory(categoryId);
 

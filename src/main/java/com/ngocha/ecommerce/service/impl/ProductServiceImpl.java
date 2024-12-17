@@ -8,6 +8,7 @@ import com.ngocha.ecommerce.payload.ProductDto;
 import com.ngocha.ecommerce.payload.ProductResponse;
 import com.ngocha.ecommerce.repository.CategoryRepository;
 import com.ngocha.ecommerce.repository.ProductRepository;
+import com.ngocha.ecommerce.service.FileService;
 import com.ngocha.ecommerce.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +29,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final FileService fileService;
     private final ModelMapper modelMapper;
 
     private String path = "/images";
@@ -36,17 +39,11 @@ public class ProductServiceImpl implements ProductService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
-        boolean isProductNotPresent = true;
-
-        List<Product> products = category.getProducts();
-
-        for (int i = 0; i < products.size(); i++) {
-            if (products.get(i).getProductName().equals(product.getProductName())
-                    && products.get(i).getDescription().equals(product.getDescription())) {
-                isProductNotPresent = false;
-                break;
-            }
-        }
+        boolean isProductNotPresent = category.getProducts().stream()
+                .noneMatch(existingProduct ->
+                        existingProduct.getProductName().equals(product.getProductName()) &&
+                                existingProduct.getDescription().equals(product.getDescription())
+                );
 
         if (isProductNotPresent) {
             product.setImage("");
@@ -76,7 +73,7 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = pageProducts.getContent();
 
         if (products.isEmpty()) {
-            throw new APIException("No User Exist!");
+            throw new APIException("No Product Exist!");
         }
 
         List<ProductDto> productDtos = products.stream().map(product -> {
@@ -182,7 +179,7 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = pageProducts.getContent();
 
         if (products.isEmpty()) {
-            throw new APIException("No User Exist!");
+            throw new APIException("No Product Exist!");
         }
 
         List<ProductDto> productDtos = products.stream().map(product -> {
@@ -202,7 +199,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDto updateProductImage(Long productId, MultipartFile image) {
+    public ProductDto updateProductImage(Long productId, MultipartFile image) throws IOException {
         Product existProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 
