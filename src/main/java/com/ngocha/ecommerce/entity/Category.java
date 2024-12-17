@@ -1,9 +1,11 @@
 package com.ngocha.ecommerce.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -13,5 +15,10 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
 
+    @NotBlank
+    @Size(min = 5, message = "Category name must have at least 5 characters")
     private String categoryName;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<Product> products;
 }

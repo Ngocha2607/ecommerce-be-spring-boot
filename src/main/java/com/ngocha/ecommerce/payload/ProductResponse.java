@@ -9,8 +9,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
-    private List<UserDto> content;
+public class ProductResponse {
+    private List<ProductDto> content;
     private Integer pageNumber;
     private Integer pageSize;
     private Long totalElements;

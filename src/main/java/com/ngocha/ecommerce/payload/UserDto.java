@@ -1,10 +1,13 @@
 package com.ngocha.ecommerce.payload;
 
 
-import com.ngocha.ecommerce.entity.Role;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDto {
 
     private Long userId;
