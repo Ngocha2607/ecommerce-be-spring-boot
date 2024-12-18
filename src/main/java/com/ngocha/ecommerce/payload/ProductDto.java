@@ -24,4 +24,6 @@ public class ProductDto {
     private Long quantity;
 
     private Float specialPrice;
+
+    private Long categoryId;
 }

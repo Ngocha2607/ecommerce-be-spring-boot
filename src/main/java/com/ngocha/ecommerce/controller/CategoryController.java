@@ -18,7 +18,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping("/public/categories")
-    public ResponseEntity<CategoryResponse> getUsers(
+    public ResponseEntity<CategoryResponse> getAllCategories(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize
     ) {
@@ -27,14 +27,14 @@ public class CategoryController {
     }
 
     @GetMapping("/public/categories/{categoryId}")
-    public ResponseEntity<Category> getUser(@PathVariable Long categoryId) {
+    public ResponseEntity<Category> getCayegoryByID(@PathVariable Long categoryId) {
         Category category = categoryService.getCategoryById(categoryId);
         return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
     @PostMapping("/admin/categories/store")
-    public ResponseEntity<Category> store(@RequestBody CategoryDto categoryDto) {
-        Category storedCategory = categoryService.create(categoryDto);
+    public ResponseEntity<Category> store(@RequestBody Category category) {
+        Category storedCategory = categoryService.create(category);
         return new ResponseEntity<>(storedCategory, HttpStatus.OK);
     }
 

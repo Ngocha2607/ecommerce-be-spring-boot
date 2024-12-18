@@ -1,5 +1,6 @@
 package com.ngocha.ecommerce.entity;
 
+import com.ngocha.ecommerce.payload.ProductDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -21,6 +22,6 @@ public class Category {
     private String categoryName;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<Product> products;
+    private List<Product> products = new ArrayList<>();
 
 }

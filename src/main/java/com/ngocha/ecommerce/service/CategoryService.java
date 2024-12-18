@@ -5,7 +5,7 @@ import com.ngocha.ecommerce.payload.CategoryDto;
 import com.ngocha.ecommerce.payload.CategoryResponse;
 
 public interface CategoryService {
-    Category create(CategoryDto categoryDto);
+    Category create(Category category);
     CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize);
     Category getCategoryById(Long categoryId);
     Category updateCategory(Long categoryId, Category category);

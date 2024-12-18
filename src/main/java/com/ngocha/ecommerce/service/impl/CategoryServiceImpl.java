@@ -4,10 +4,12 @@ import com.ngocha.ecommerce.entity.Category;
 import com.ngocha.ecommerce.exception.APIException;
 import com.ngocha.ecommerce.payload.CategoryDto;
 import com.ngocha.ecommerce.payload.CategoryResponse;
+import com.ngocha.ecommerce.payload.ProductDto;
 import com.ngocha.ecommerce.payload.UserResponse;
 import com.ngocha.ecommerce.repository.CategoryRepository;
 import com.ngocha.ecommerce.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,19 +18,18 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-
+@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
+    private final ModelMapper modelMapper;
 
 
     @Override
-    public Category create(CategoryDto categoryDto) {
-        Category savedCategory = new Category();
-        savedCategory.setCategoryName(categoryDto.getCategoryName());
-        return categoryRepository.save(savedCategory);
+    public Category create(Category category) {
+        return categoryRepository.save(category);
     }
 
     @Override
@@ -41,9 +42,13 @@ public class CategoryServiceImpl implements CategoryService {
             throw new APIException("No Category Exist!");
         }
 
+        List<CategoryDto> categoryDtos = categories.stream().map(category -> {
+            return modelMapper.map(category, CategoryDto.class);
+        }).collect(Collectors.toList());
+
         CategoryResponse categoryResponse = new CategoryResponse();
 
-        categoryResponse.setContent(categories);
+        categoryResponse.setContent(categoryDtos);
         categoryResponse.setPageNumber(pageCategories.getNumber());
         categoryResponse.setPageSize(pageCategories.getSize());
         categoryResponse.setTotalElements(pageCategories.getTotalElements());
