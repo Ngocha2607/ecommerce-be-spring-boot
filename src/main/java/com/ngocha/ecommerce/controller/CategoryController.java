@@ -2,11 +2,10 @@ package com.ngocha.ecommerce.controller;
 
 import com.ngocha.ecommerce.configuration.AppConstants;
 import com.ngocha.ecommerce.entity.Category;
-import com.ngocha.ecommerce.payload.CategoryDto;
 import com.ngocha.ecommerce.payload.CategoryResponse;
 import com.ngocha.ecommerce.service.CategoryService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "E-Commerce Application")
 public class CategoryController {
     private final CategoryService categoryService;
 

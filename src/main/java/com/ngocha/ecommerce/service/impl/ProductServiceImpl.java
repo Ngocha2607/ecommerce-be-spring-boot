@@ -10,6 +10,7 @@ import com.ngocha.ecommerce.repository.CategoryRepository;
 import com.ngocha.ecommerce.repository.ProductRepository;
 import com.ngocha.ecommerce.service.FileService;
 import com.ngocha.ecommerce.service.ProductService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 

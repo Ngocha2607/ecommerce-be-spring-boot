@@ -3,6 +3,9 @@ package com.ngocha.ecommerce;
 import com.ngocha.ecommerce.entity.Role;
 import com.ngocha.ecommerce.entity.User;
 import com.ngocha.ecommerce.repository.UserRepository;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -12,6 +15,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
+@SecurityScheme(name = "E-Commerce Application", scheme = "bearer", type = SecuritySchemeType.HTTP, in = SecuritySchemeIn.HEADER)
+
 public class EcommerceApplication implements CommandLineRunner {
 	@Autowired
 	private UserRepository userRepository;

@@ -4,13 +4,11 @@ import com.ngocha.ecommerce.entity.Category;
 import com.ngocha.ecommerce.exception.APIException;
 import com.ngocha.ecommerce.payload.CategoryDto;
 import com.ngocha.ecommerce.payload.CategoryResponse;
-import com.ngocha.ecommerce.payload.ProductDto;
-import com.ngocha.ecommerce.payload.UserResponse;
 import com.ngocha.ecommerce.repository.CategoryRepository;
 import com.ngocha.ecommerce.service.CategoryService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;

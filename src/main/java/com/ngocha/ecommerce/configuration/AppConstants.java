@@ -10,7 +10,7 @@ public class AppConstants {
     public static final String SORT_DIR = "asc";
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60 * 1000;
     public static final long JWT_REFRESH_TOKEN_VALIDITY = 48 * 60 * 60 * 1000;
-    public static final String[] PUBLIC_URLS = { "v3/api-doc/**", "/swagger-ui/**", "/api/register/**", "/api/login", "/api/refresh", "/api/test",};
+    public static final String[] PUBLIC_URLS = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/*", "/api-docs/**", "/api/register/**", "/api/login", "/api/refresh", "/api/test",};
     public static final String[] USER_URLS = { "/api/public/**"};
     public static final String[] ADMIN_URLS = { "/api/admin/**"};
 }

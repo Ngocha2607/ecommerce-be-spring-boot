@@ -1,5 +1,6 @@
 package com.ngocha.ecommerce.service.impl;
 
+import com.ngocha.ecommerce.entity.Cart;
 import com.ngocha.ecommerce.entity.Role;
 import com.ngocha.ecommerce.entity.User;
 import com.ngocha.ecommerce.exception.APIException;
@@ -8,6 +9,7 @@ import com.ngocha.ecommerce.payload.UserDto;
 import com.ngocha.ecommerce.payload.UserResponse;
 import com.ngocha.ecommerce.repository.UserRepository;
 import com.ngocha.ecommerce.service.UserService;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,7 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-
+@Transactional
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
@@ -49,6 +51,8 @@ public class UserServiceImpl implements UserService {
 
     public UserDto registerUser(User user) {
 
+        Cart cart = new Cart();
+        user.setCart(cart);
         user.setRole(Role.USER.name());
 
         User registeredUser = userRepository.save(user);
