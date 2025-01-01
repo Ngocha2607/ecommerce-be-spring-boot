@@ -1,11 +1,10 @@
 package com.ngocha.ecommerce.service.impl;
 
-import com.ngocha.ecommerce.entity.Cart;
-import com.ngocha.ecommerce.entity.Order;
-import com.ngocha.ecommerce.entity.Payment;
+import com.ngocha.ecommerce.entity.*;
 import com.ngocha.ecommerce.exception.APIException;
 import com.ngocha.ecommerce.exception.ResourceNotFoundException;
 import com.ngocha.ecommerce.payload.OrderDto;
+import com.ngocha.ecommerce.payload.OrderItemDto;
 import com.ngocha.ecommerce.payload.response.OrderResponse;
 import com.ngocha.ecommerce.repository.CartRepository;
 import com.ngocha.ecommerce.repository.OrderItemRepository;
@@ -23,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,7 +61,45 @@ public class OrderServiceImpl implements OrderService {
         order.setPayment(payment);
 
         Order savedOrder = orderRepository.save(order);
-        return null;
+
+        List<CartItem> cartItems = cart.getCartItems();
+
+        if(cartItems.isEmpty()) {
+            throw new APIException("Cart is empty");
+        }
+
+        List<OrderItem> orderItems = new ArrayList<>();
+
+        for(CartItem cartItem: cartItems){
+
+            OrderItem orderItem = new OrderItem();
+
+            orderItem.setProduct(cartItem.getProduct());
+            orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setDiscount(cartItem.getDiscount());
+            orderItem.setOrderedProductPrice(cartItem.getProductPrice());
+            orderItem.setOrder(savedOrder);
+
+            orderItems.add(orderItem);
+        }
+
+        orderItems = orderItemRepository.saveAll(orderItems);
+
+        cart.getCartItems().forEach(item -> {
+            int quantity = item.getQuantity();
+
+            Product product = item.getProduct();
+
+            cartService.deleteProductFromCart(cartId, item.getProduct().getProductId());
+
+            product.setQuantity(product.getQuantity() - quantity);
+        });
+
+        OrderDto orderDto = modelMapper.map(savedOrder, OrderDto.class);
+        orderItems.forEach(item -> orderDto.getOrderItems().add(modelMapper.map(item, OrderItemDto.class))
+
+);
+        return orderDto;
     }
 
     @Override
